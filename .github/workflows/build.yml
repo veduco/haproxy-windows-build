@@ -6,9 +6,14 @@ name: Build HAP
 on:
   workflow_dispatch:
     inputs:
-      version:
-        required: true
-        description: 'Format: v3.0.10'
+      branch:
+        type: choice
+        description: 'Branch'
+        options:
+          - haproxy-3.0
+          - haproxy 2.8
+          - haproxy 2.6
+          - haproxy-3.2
 
 jobs:
   build-src:
@@ -16,22 +21,19 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Generate variables
-        id: vars
-        run: |
-          $version = '${{ inputs.version }}'
-          $version -match 'v([2-3]\.[02468]).*'
-          $branch = "haproxy-$($matches[1])"
-          $release_name = "$($version)+$([Math]::Floor([decimal](Get-Date(Get-Date).ToUniversalTime()-uformat "%s")))"
-          Write-Host "VARIABLES: $version | $branch | $release_name"
-
-          "version=$version" >> $env:GITHUB_OUTPUT
-          "branch=$branch" >> $env:GITHUB_OUTPUT
-          "release_name=$release_name" >> $env:GITHUB_OUTPUT
-
       - name: Clone requested version
+        id: clone
         run: |
-          git clone --depth 1 --branch ${{ steps.vars.outputs.version }} http://git.haproxy.org/git/${{ steps.vars.outputs.branch }}.git
+          git clone http://git.haproxy.org/git/${{ inputs.branch }}.git
+          cd ${{ inputs.branch }}/
+          $version="$(git describe --abbrev=0)"
+          $release_name = "$($version)+$([Math]::Floor([decimal](Get-Date(Get-Date).ToUniversalTime()-uformat "%s")))"
+
+          git reset --hard $version
+
+          Write-Host "VARIABLES: $version | ${{ inputs.branch }} | $release_name"
+
+          "release_name=$release_name" >> $env:GITHUB_OUTPUT
 
       - name: Set up Cygwin
         uses: cygwin/cygwin-install-action@master
@@ -47,7 +49,7 @@ jobs:
       - name: Make haproxy (cygwin)
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
         run: |
-          cd ${{ steps.vars.outputs.branch }}
+          cd ${{ inputs.branch }}
           sed -i 's/--export-dynamic/--export-all-symbols/g' Makefile
           make TARGET=cygwin \
             USE_OPENSSL=3.0 \
@@ -62,13 +64,13 @@ jobs:
           mkdir release
           pwd
           ls -al
-          ls -al ${{ steps.vars.outputs.branch }}/
-          cp ${{ steps.vars.outputs.branch }}/haproxy.exe release/
+          ls -al ${{ inputs.branch }}/
+          cp ${{ inputs.branch }}/haproxy.exe release/
           dependencies=$(ldd release/haproxy.exe | grep -vi 'system32' | awk '{print $3}')
           for dep in $dependencies; do
               cp "$dep" ./release/
           done
-          tar cvzf ./haproxy-${{ steps.vars.outputs.release_name }}.tar.gz release/
+          tar cvzf ./haproxy-${{ steps.clone.outputs.release_name }}.tar.gz release/
           ls -al release/
 
       - name: Dump binary info
@@ -86,8 +88,8 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ steps.vars.outputs.release_name }}
-          tag_name: ${{ steps.vars.outputs.release_name }}
+          name: ${{ steps.clone.outputs.release_name }}
+          tag_name: ${{ steps.clone.outputs.release_name }}
           body_path: infoDump.txt
           files: |
             *.tar.gz
