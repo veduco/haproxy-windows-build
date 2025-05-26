@@ -41,11 +41,6 @@ jobs:
           platform: x86_64
           packages: make gcc-core gcc-g++ wget libssl-devel zlib-devel libpcre2-devel liblua-devel=5.4.4-1 lighttpd-lua-modules lua=5.4.4-1 cygwin-devel
 
-      # Cygwin executables are added to PATH, so you can call them directly:
-      - run: |
-          ls.exe -Al
-          pwd.exe
-
       - name: Make haproxy (cygwin)
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
         run: |
