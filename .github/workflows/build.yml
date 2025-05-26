@@ -59,7 +59,7 @@ jobs:
             #USE_NETFILTER=1 \
             #USE_NS=1 \
             USE_LIBCRYPT=1 USE_CRYPT_H=1 \
-            #USE_GETADDRINFO=1 \
+            USE_GETADDRINFO=1
             #USE_CPU_AFFINITY=1 \
             #USE_DL=1 \
             #USE_EPOLL=1 \
