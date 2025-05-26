@@ -92,6 +92,7 @@ jobs:
         with:
           name: ${{ steps.clone.outputs.release_name }}
           tag_name: ${{ steps.clone.outputs.release_name }}
+          target_commitish: ${{ github.sha }}
           body_path: infoDump.txt
           files: |
             *.tar.gz
