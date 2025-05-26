@@ -46,7 +46,7 @@ jobs:
         run: |
           cd ${{ inputs.branch }}
           sed -i 's/--export-dynamic/--export-all-symbols/g' Makefile
-          make TARGET=cygwin \
+          makeOpts="TARGET=cygwin \
             USE_OPENSSL=3.0 \
             USE_SLZ=1 \
             USE_PCRE2=1 USE_PCRE2_JIT=1 \
@@ -57,18 +57,21 @@ jobs:
             USE_PROMEX=1 \
             USE_LIBCRYPT=1 USE_CRYPT_H=1 \
             USE_GETADDRINFO=1 \
-            USE_ACCEPT4=1 \
-            #USE_BACKTRACE=1 \
-            ###
-            #USE_EPOLL=1 \
-            #USE_RT=1
-            ###
-            #SHM_OPEN
-            #USE_PRCTL=1 \
-            #USE_NETFILTER=1 \
-            #USE_NS=1 \
-            #USE_CPU_AFFINITY=1 \
-            #USE_DL=1 \
+            USE_ACCEPT4=1"
+          make opts ${makeOpts}
+          make ${makeOpts}
+
+          #USE_BACKTRACE=1 \
+          ###
+          #USE_EPOLL=1 \
+          #USE_RT=1
+          ###
+          #SHM_OPEN
+          #USE_PRCTL=1 \
+          #USE_NETFILTER=1 \
+          #USE_NS=1 \
+          #USE_CPU_AFFINITY=1 \
+          #USE_DL=1"
 
       - name: Gather artifacts (cygwin)
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
