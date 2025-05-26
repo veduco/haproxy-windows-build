@@ -37,24 +37,42 @@ jobs:
         uses: cygwin/cygwin-install-action@master
         with:
           platform: x86_64
-          packages: make gcc-core gcc-g++ wget libssl-devel zlib-devel libpcre2-devel liblua-devel=5.4.4-1 lighttpd-lua-modules lua=5.4.4-1 cygwin-devel
-
-      # Cygwin executables are added to PATH, so you can call them directly:
-      - run: |
-          ls.exe -Al
-          pwd.exe
+          packages: make gcc-core gcc-g++ wget libssl-devel zlib-devel libpcre2-devel liblua-devel=5.4.4-1 lighttpd-lua-modules lua=5.4.4-1 cygwin-devel libcrypt-devel
 
       - name: Make haproxy (cygwin)
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
         run: |
           cd ${{ steps.vars.outputs.branch }}
           sed -i 's/--export-dynamic/--export-all-symbols/g' Makefile
-          make TARGET=cygwin \
+          makeOpts="TARGET=cygwin \
             USE_OPENSSL=3.0 \
-            USE_ZLIB=1.3.1 \
+            USE_SLZ=1 \
             USE_PCRE2=1 USE_PCRE2_JIT=1 \
             USE_LUA=1 LUA_LIB=/usr/lib LUA_INC=/usr/include/lua5.4 LUA_LIB_NAME=lua5.4 \
-            USE_THREAD=1
+            USE_THREAD=1 \
+            USE_THREAD_DUMP=1 \
+            USE_PTHREAD_EMULATION=1 \
+            USE_PROMEX=1 \
+            USE_LIBCRYPT=1 USE_CRYPT_H=1 \
+            USE_GETADDRINFO=1 \
+            USE_ACCEPT4=1 \
+            USE_RT=1"
+          make opts ${makeOpts}
+          make ${makeOpts}
+
+          # -----------------------
+          # These did not compile
+          # -----------------------
+          #USE_RT=1
+          #?SHM_OPEN?
+          #USE_PRCTL=1
+          #USE_NETFILTER=1
+          #USE_EPOLL=1
+          #USE_CPU_AFFINITY=1
+          #USE_DL=1"
+          #USE_BACKTRACE=1
+          #USE_PRCTL=1
+          #USE_NS=1
 
       - name: Gather artifacts (cygwin)
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
