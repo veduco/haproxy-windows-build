@@ -106,6 +106,7 @@ jobs:
         with:
           name: ${{ steps.vars.outputs.release_name }}
           tag_name: ${{ steps.vars.outputs.release_name }}
+          target_commitish: ${{ github.sha }}
           body_path: infoDump.txt
           files: |
             *.tar.gz
