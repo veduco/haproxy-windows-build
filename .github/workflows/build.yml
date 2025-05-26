@@ -39,7 +39,7 @@ jobs:
         uses: cygwin/cygwin-install-action@master
         with:
           platform: x86_64
-          packages: make gcc-core gcc-g++ wget libssl-devel zlib-devel libpcre2-devel liblua-devel=5.4.4-1 lighttpd-lua-modules lua=5.4.4-1 cygwin-devel
+          packages: make gcc-core gcc-g++ wget libssl-devel zlib-devel libpcre2-devel liblua-devel=5.4.4-1 lighttpd-lua-modules lua=5.4.4-1 cygwin-devel libcrypt-devel
 
       - name: Make haproxy (cygwin)
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
@@ -54,11 +54,11 @@ jobs:
             USE_THREAD=1 \
             USE_THREAD_DUMP=1 \
             USE_PTHREAD_EMULATION=1 \
-            USE_PROMEX=1
+            USE_PROMEX=1 \
             #USE_PRCTL=1 \
             #USE_NETFILTER=1 \
             #USE_NS=1 \
-            #USE_LIBCRYPT=1 USE_CRYPT_H=1 \
+            USE_LIBCRYPT=1 USE_CRYPT_H=1 \
             #USE_GETADDRINFO=1 \
             #USE_CPU_AFFINITY=1 \
             #USE_DL=1 \
