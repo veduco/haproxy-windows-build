@@ -34,6 +34,7 @@ jobs:
           version=$(curl https://www.haproxy.org/download/${cutBranch}/src/releases.json | jq -r .latest_release)
           curl -sLO https://www.haproxy.org/download/${cutBranch}/src/haproxy-${version}.tar.gz
           tar xzf haproxy-${version}.tar.gz
+          rm -f haproxy-${version}.tar.gz
           mv haproxy-${version} ${{ inputs.branch }}
 
           release_name="v${version}+$(date +%s)"
