@@ -58,7 +58,20 @@ jobs:
             USE_LUA=1 LUA_LIB=/usr/lib LUA_INC=/usr/include/lua5.4 LUA_LIB_NAME=lua5.4 \
             USE_THREAD=1 \
             USE_THREAD_DUMP=1 \
-            USE_PTHREAD_EMULATION=1
+            USE_PTHREAD_EMULATION=1 \
+            USE_PROMEX=1
+            #USE_PRCTL=1 \
+            #USE_NETFILTER=1 \
+            #USE_NS=1 \
+            #USE_LIBCRYPT=1 USE_CRYPT_H=1 \
+            #USE_GETADDRINFO=1 \
+            #USE_CPU_AFFINITY=1 \
+            #USE_DL=1 \
+            #USE_EPOLL=1 \
+            #USE_BACKTRACE=1 \
+            #USE_ACCEPT4=1 \
+            #USE_RT=1
+            #SHM_OPEN
 
       - name: Gather artifacts (cygwin)
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
