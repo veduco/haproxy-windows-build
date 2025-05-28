@@ -71,7 +71,7 @@ jobs:
             USE_ACCEPT4=1 \
             USE_RT=1"
           make opts ${makeOpts}
-          make ${makeOpts}
+          make -j $(nproc) ${makeOpts}
 
           # -----------------------
           # These did not compile
