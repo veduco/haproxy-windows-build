@@ -30,7 +30,7 @@ jobs:
 
       - name: Get code
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
-        run: |
+        run: | # shell
           cutBranch=$(echo ${{ inputs.branch }} | sed 's/^.*-//')
           version=$(curl https://www.haproxy.org/download/${cutBranch}/src/releases.json | jq -r .latest_release)
           curl -sLO https://www.haproxy.org/download/${cutBranch}/src/haproxy-${version}.tar.gz
@@ -45,7 +45,7 @@ jobs:
 
       - name: Set release name
         id: vars
-        run: |
+        run: | # powershell
           $version=$(cat version.txt)
           $release_name=$(cat release_name.txt)
 
@@ -55,7 +55,7 @@ jobs:
 
       - name: Make haproxy (cygwin)
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
-        run: |
+        run: | # shell
           cd ${{ inputs.branch }}
           sed -i 's/--export-dynamic/--export-all-symbols/g' Makefile
           makeOpts="TARGET=cygwin \
@@ -90,7 +90,7 @@ jobs:
 
       - name: Gather artifacts (cygwin)
         shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
-        run: |
+        run: | # shell
           mkdir release
           pwd
           ls -al
@@ -105,7 +105,7 @@ jobs:
 
       - name: Dump binary info
         id: info
-        run: |
+        run: | # powershell
           release\haproxy.exe -vv
           ldd release\haproxy.exe
           echo '```' > infoDump.txt
