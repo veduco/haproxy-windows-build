@@ -11,9 +11,9 @@ on:
         description: 'Branch'
         options:
           - haproxy-3.0
-          - haproxy 2.8
-          - haproxy 2.6
           - haproxy-3.2
+          - haproxy-2.8
+          - haproxy-2.6
 
 jobs:
   build-src:
